@@ -343,7 +343,15 @@ function updateTimers(){
             timerEl.innerText=formatTime(remaining);
 
             const converted = convertTimezone(spawn);
-            spawnEl.innerText="Spawn: "+converted.toLocaleString();
+            spawnEl.innerText = "Spawn: " + converted.toLocaleString([], {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true
+});
+
         } else {
             timerEl.classList.remove("warning");
             timerEl.classList.add("ready");
@@ -408,4 +416,5 @@ setInterval(()=>{
 </script>
 </body>
 </html>
+
 
