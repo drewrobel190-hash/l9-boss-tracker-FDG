@@ -3,15 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>L9 Boss Tracker for FDG</title>
+<title>L9 Boss Tracker</title>
 
 <style>
 body{
     margin:0;
     font-family:Arial, sans-serif;
-    background:linear-gradient(to right,#0f1418,#1c2430);
+    background: linear-gradient(-45deg, #000000, #0a0f14, #111827, #05070a);
+    background-size: 300% 300%;
+    animation: darkFlow 14s ease infinite;
     color:white;
 }
+body::before{
+    content:"";
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: radial-gradient(circle at 20% 30%, rgba(0,120,255,0.08), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(180,0,255,0.06), transparent 40%);
+    pointer-events:none;
+}
+
+
+@keyframes darkFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+
+
+header{
+    padding:20px;
+    font-size:24px;
+    font-weight:bold;
+    border-bottom:2px solid #1f2c3a;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    background:rgba(0,0,0,0.4);
+    backdrop-filter:blur(6px);
+    position:relative;
+}
+
+.header-left{
+    flex:1;
+}
+
+.header-center{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+.header-right{
+    flex:1;
+    display:flex;
+    justify-content:flex-end;
+}
+
+
+select{
+    padding:10px 14px;
+    background:linear-gradient(145deg,#0f1418,#1a1f25);
+    color:#fff;
+    border:1px solid #333;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+    outline:none;
+    transition:all 0.3s ease;
+    box-shadow:0 0 12px rgba(0,0,0,0.6);
+    appearance:none;
+}
+
+/* Glow when active */
+select:hover{
+    border-color:#ff9800;
+    box-shadow:0 0 15px rgba(255,152,0,0.5);
+}
+
+select:focus{
+    border-color:#4da6ff;
+    box-shadow:0 0 18px rgba(77,166,255,0.6);
+}
+
+/* Style dropdown options (limited but works on most browsers) */
+select option{
+    background:#0f1418;
+    color:white;
+    padding:10px;
+}
+
+select{
+    background-image:
+        linear-gradient(145deg,#0f1418,#1a1f25),
+        url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 10px center;
+    background-size:16px;
+    padding-right:35px;
+}
+
 
 header{
     padding:20px;
@@ -21,15 +117,26 @@ header{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    background:rgba(0,0,0,0.4);
+    backdrop-filter:blur(6px);
 }
 
-select{
-    padding:6px;
-    background:#111;
-    color:white;
-    border:1px solid #444;
-    border-radius:4px;
+#todayGrid .card{
+    border-left:4px solid #ff3b3b;
+    animation: softGlow 4s ease-in-out infinite alternate;
 }
+
+@keyframes softGlow{
+    0%{
+        box-shadow: 0 0 6px rgba(255,59,59,0.15);
+    }
+    100%{
+        box-shadow: 0 0 12px rgba(255,59,59,0.35);
+    }
+}
+
+
+
 
 .section{ padding:20px; }
 
@@ -96,6 +203,7 @@ button{
     cursor:pointer;
 }
 
+
 .warning{ color:#ff9800 !important; font-weight:bold; }
 
 .ready{
@@ -109,18 +217,74 @@ button{
     50% { text-shadow:0 0 20px #ff3b3b; }
     100% { text-shadow:0 0 5px #ff3b3b; }
 }
+
+.admin-btn{
+    margin-left:10px;
+    padding:8px 14px;
+    background:linear-gradient(145deg,#3b0a0a,#7a1c1c);
+    color:white;
+    border:1px solid #aa2b2b;
+    border-radius:8px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:all 0.3s ease;
+    box-shadow:0 0 8px rgba(255,0,0,0.3);
+}
+
+.admin-btn:hover{
+    background:linear-gradient(145deg,#5c0f0f,#a32222);
+    box-shadow:0 0 15px rgba(255,0,0,0.6);
+    transform:translateY(-2px);
+}
+
+.admin-btn:active{
+    transform:scale(0.95);
+}
+
+.admin-btn.active-admin{
+    background:linear-gradient(145deg,#8b0000,#ff0000);
+    box-shadow:0 0 20px rgba(255,0,0,0.8);
+}
+
+.site-title{
+    font-size:26px;
+    font-weight:800;
+    background:linear-gradient(90deg,#ff9800,#ff3b3b,#ff9800);
+    background-size:200% auto;
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:titleGlow 4s linear infinite;
+    text-shadow:0 0 10px rgba(255,80,0,0.4);
+}
+
+@keyframes titleGlow{
+    0%{ background-position:0% center; }
+    100%{ background-position:200% center; }
+}
+
+
 </style>
 </head>
 
 <body>
 
 <header>
-🔥 L9 Boss Tracker (AzteczX4龙)
+  <div class="header-left">
+    <span class="site-title">🔥 L9 Boss Tracker (AzteczX4龙)</span>
+</div>
 
-<select id="timezoneSelect">
-<option value="8">Philippines (UTC+8)</option>
-<option value="7">Indonesia / Thailand (UTC+7)</option>
-</select>
+    <div class="header-center">
+        <select id="timezoneSelect">
+            <option value="8">Philippines (UTC+8)</option>
+            <option value="7">Indonesia / Thailand (UTC+7)</option>
+        </select>
+    </div>
+
+    <div class="header-right">
+        <button class="admin-btn" onclick="adminLogin()">Admin</button>
+    </div>
+</header>
+
 </header>
 
 <div class="section">
@@ -153,16 +317,45 @@ const db = firebase.database();
 
 let cloudData = {};
 let isTyping = false;
-let selectedOffset = 8;
+let isAdmin = false;
 
-document.getElementById("timezoneSelect").addEventListener("change",function(){
+
+/* ===== TIMEZONE LOCAL STORAGE UPGRADE ===== */
+let selectedOffset = 8;
+const timezoneSelect = document.getElementById("timezoneSelect");
+
+// Load saved timezone
+const savedOffset = localStorage.getItem("timezoneOffset");
+if(savedOffset){
+    selectedOffset = parseInt(savedOffset);
+    timezoneSelect.value = savedOffset;
+}
+
+// Save when changed
+timezoneSelect.addEventListener("change", function(){
     selectedOffset = parseInt(this.value);
+    localStorage.setItem("timezoneOffset", selectedOffset);
 });
+/* ========================================== */
 
 function convertTimezone(date){
     const utc = date.getTime() + (date.getTimezoneOffset()*60000);
     return new Date(utc + selectedOffset*3600000);
 }
+
+function adminLogin(){
+    document.querySelector(".admin-btn").classList.add("active-admin");
+    const password = prompt("Enter Admin Password:");
+    
+    if(password === "1900"){   // change this later
+        isAdmin = true;
+        alert("Admin mode activated");
+        applyAdminMode();
+    } else {
+        alert("Wrong password");
+    }
+}
+
 
 /* ===== FULL BOSS LIST ===== */
 const bosses = [
@@ -224,7 +417,7 @@ image:"Pictures/Auraq.png"},
 
 { name:"Chaiflock", type:"fixed",
 schedule:[{day:6,time:"22:00"}],
-image:"Pictures/chaiflock.png"},
+image:"Pictures/Chaiflock.png"},
 
 { name:"Benji", type:"fixed",
 schedule:[{day:0,time:"21:00"}],
@@ -287,11 +480,13 @@ function createCard(boss){
             <div class="name">${boss.name} (${boss.hours}h)</div>
             <div class="timer">Not Set</div>
             <div class="spawn"></div>
-            <input type="time"
-                   id="input-${boss.name}"
-                   onfocus="isTyping=true"
-                   onblur="isTyping=false">
-            <button onclick="setDeath('${boss.name}',${boss.hours})">Set Death</button>
+         <div class="admin-controls">
+    <input type="time"
+           id="input-${boss.name}"
+           onfocus="isTyping=true"
+           onblur="isTyping=false">
+    <button onclick="setDeath('${boss.name}',${boss.hours})">Set Death</button>
+</div>
         </div>`;
     } else {
         card.innerHTML=`
@@ -344,14 +539,13 @@ function updateTimers(){
 
             const converted = convertTimezone(spawn);
             spawnEl.innerText = "Spawn: " + converted.toLocaleString([], {
-                year: "numeric",
-                month: "numeric",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true
+              year: "numeric",
+              month: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true
 });
-
 
         } else {
             timerEl.classList.remove("warning");
@@ -371,25 +565,45 @@ function sortBosses(){
 
     const cards = Array.from(document.querySelectorAll(".card"));
 
+    // Sort globally
     cards.sort((a,b)=>{
-        return (Number(a.dataset.spawn)||Infinity) -
-               (Number(b.dataset.spawn)||Infinity);
+        const spawnA = Number(a.dataset.spawn);
+        const spawnB = Number(b.dataset.spawn);
+
+        if(!spawnA || spawnA === Infinity) return 1;
+        if(!spawnB || spawnB === Infinity) return -1;
+
+        return spawnA - spawnB;
     });
 
     cards.forEach(card=>{
         const spawnTime = Number(card.dataset.spawn);
-        if(!spawnTime || spawnTime===Infinity){
-            soon.appendChild(card);
-            return;
+
+        let targetSection;
+
+        if(!spawnTime || spawnTime === Infinity){
+            targetSection = soon;
+        } else {
+            const spawnDate = new Date(spawnTime);
+
+            if(isSameDay(spawnDate, now)){
+                targetSection = today;
+            }
+            else if(isTomorrow(spawnDate, now)){
+                targetSection = tomorrow;
+            }
+            else{
+                targetSection = soon;
+            }
         }
 
-        const spawnDate = new Date(spawnTime);
-
-        if(isSameDay(spawnDate, now)) today.appendChild(card);
-        else if(isTomorrow(spawnDate, now)) tomorrow.appendChild(card);
-        else soon.appendChild(card);
+        // 🔥 Only move if section is wrong
+        if(card.parentElement !== targetSection){
+            targetSection.appendChild(card);
+        }
     });
 }
+
 
 function setDeath(name,hours){
     const input = document.getElementById("input-"+name).value;
@@ -408,15 +622,23 @@ db.ref("bossTimers").on("value",snap=>{
 });
 
 bosses.forEach(createCard);
+applyAdminMode();
 
-setInterval(()=>{
-    updateTimers();
-    sortBosses();
-},1000);
+
+function applyAdminMode(){
+    const controls = document.querySelectorAll(".admin-controls");
+    
+    controls.forEach(control=>{
+        control.style.display = isAdmin ? "block" : "none";
+    });
+}
+
+setInterval(updateTimers,1000);
+setInterval(sortBosses,3000);
+
 
 </script>
 </body>
 </html>
-
 
 
