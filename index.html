@@ -344,13 +344,14 @@ function updateTimers(){
 
             const converted = convertTimezone(spawn);
             spawnEl.innerText = "Spawn: " + converted.toLocaleString([], {
-    year: "numeric",
-    month: "numeric",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true
+                year: "numeric",
+                month: "numeric",
+                day: "numeric",
+                hour: "numeric",
+                minute: "2-digit",
+                hour12: true
 });
+
 
         } else {
             timerEl.classList.remove("warning");
@@ -416,5 +417,6 @@ setInterval(()=>{
 </script>
 </body>
 </html>
+
 
 
