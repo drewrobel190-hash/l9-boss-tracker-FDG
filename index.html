@@ -565,17 +565,7 @@ function sortBosses(){
 
     const cards = Array.from(document.querySelectorAll(".card"));
 
-    // Sort globally
-    cards.sort((a,b)=>{
-        const spawnA = Number(a.dataset.spawn);
-        const spawnB = Number(b.dataset.spawn);
-
-        if(!spawnA || spawnA === Infinity) return 1;
-        if(!spawnB || spawnB === Infinity) return -1;
-
-        return spawnA - spawnB;
-    });
-
+    // First separate by section logic
     cards.forEach(card=>{
         const spawnTime = Number(card.dataset.spawn);
 
@@ -597,10 +587,36 @@ function sortBosses(){
             }
         }
 
-        // 🔥 Only move if section is wrong
         if(card.parentElement !== targetSection){
             targetSection.appendChild(card);
         }
+    });
+
+    // 🔥 Now fix Coming Soon order ONLY
+    const soonCards = Array.from(soon.querySelectorAll(".card"));
+
+    soonCards.sort((a,b)=>{
+        const spawnA = Number(a.dataset.spawn);
+        const spawnB = Number(b.dataset.spawn);
+
+        const hasTimerA = spawnA && spawnA !== Infinity;
+        const hasTimerB = spawnB && spawnB !== Infinity;
+
+        // Timed bosses above Not Set
+        if(hasTimerA && !hasTimerB) return -1;
+        if(!hasTimerA && hasTimerB) return 1;
+
+        // Both timed → sort lowest first
+        if(hasTimerA && hasTimerB){
+            return spawnA - spawnB;
+        }
+
+        return 0;
+    });
+
+    // Re-append in correct order (no innerHTML wipe)
+    soonCards.forEach(card=>{
+        soon.appendChild(card);
     });
 }
 
@@ -640,5 +656,3 @@ setInterval(sortBosses,3000);
 </script>
 </body>
 </html>
-
-
