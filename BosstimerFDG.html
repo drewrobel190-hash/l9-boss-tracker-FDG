@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L9 Boss Tracker for FDG</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:linear-gradient(to right,#0f1418,#1c2430);
+    color:white;
+}
+
+header{
+    padding:20px;
+    font-size:24px;
+    font-weight:bold;
+    border-bottom:2px solid #1f2c3a;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+select{
+    padding:6px;
+    background:#111;
+    color:white;
+    border:1px solid #444;
+    border-radius:4px;
+}
+
+.section{ padding:20px; }
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:20px;
+}
+
+.card{
+    display:flex;
+    background:#2a313a;
+    border-radius:12px;
+    overflow:hidden;
+    transition:0.3s ease;
+    border-left:4px solid #2196f3;
+}
+
+.card:hover{
+    transform:translateY(-4px);
+    background:#313b45;
+}
+
+.boss-img{
+    width:110px;
+    object-fit:cover;
+}
+
+.card-content{
+    padding:15px;
+    flex:1;
+}
+
+.badge{
+    display:inline-block;
+    font-size:10px;
+    background:#7c3aed;
+    padding:4px 8px;
+    border-radius:6px;
+    margin-bottom:6px;
+}
+
+.name{ font-weight:bold; }
+
+.timer{ color:#4da6ff; margin-top:5px; }
+
+.spawn{ font-size:12px; color:#aaa; }
+
+input{
+    margin-top:8px;
+    padding:6px;
+    background:#111;
+    border:1px solid #444;
+    color:white;
+    border-radius:4px;
+}
+
+button{
+    padding:6px 10px;
+    margin-left:5px;
+    background:#a8873a;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+}
+
+.warning{ color:#ff9800 !important; font-weight:bold; }
+
+.ready{
+    color:#ff3b3b !important;
+    font-weight:bold;
+    animation:pulseGlow 1.5s infinite;
+}
+
+@keyframes pulseGlow {
+    0% { text-shadow:0 0 5px #ff3b3b; }
+    50% { text-shadow:0 0 20px #ff3b3b; }
+    100% { text-shadow:0 0 5px #ff3b3b; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+🔥 L9 Boss Tracker (AzteczX4龙)
+
+<select id="timezoneSelect">
+<option value="8">Philippines (UTC+8)</option>
+<option value="7">Indonesia / Thailand (UTC+7)</option>
+</select>
+</header>
+
+<div class="section">
+<h2>🔥 Today</h2>
+<div class="grid" id="todayGrid"></div>
+
+<h2>🌙 Tomorrow</h2>
+<div class="grid" id="tomorrowGrid"></div>
+
+<h2>📅 Coming Soon</h2>
+<div class="grid" id="soonGrid"></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyD0-Lmvx-dmxvQcb_b4T3U-D4sdadH9Y3g",
+  authDomain: "l9-boss-tracker.firebaseapp.com",
+  databaseURL: "https://l9-boss-tracker-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "l9-boss-tracker",
+  storageBucket: "l9-boss-tracker.firebasestorage.app",
+  messagingSenderId: "24208974708",
+  appId: "1:24208974708:web:925e95b886b8ead9924221"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let cloudData = {};
+let isTyping = false;
+let selectedOffset = 8;
+
+document.getElementById("timezoneSelect").addEventListener("change",function(){
+    selectedOffset = parseInt(this.value);
+});
+
+function convertTimezone(date){
+    const utc = date.getTime() + (date.getTimezoneOffset()*60000);
+    return new Date(utc + selectedOffset*3600000);
+}
+
+/* ===== FULL BOSS LIST ===== */
+const bosses = [
+
+{ name:"Venatus", type:"interval", hours:10, image:"Pictures/Venatus.png"},
+{ name:"Viorent", type:"interval", hours:10, image:"Pictures/Viorent.png"},
+{ name:"Ego", type:"interval", hours:21, image:"Pictures/Ego.png"},
+{ name:"Livera", type:"interval", hours:24, image:"Pictures/Livera.png"},
+{ name:"Araneo", type:"interval", hours:24, image:"Pictures/Araneo.png"},
+{ name:"Undomiel", type:"interval", hours:24, image:"Pictures/Undomiel.png"},
+{ name:"Lady Dalia", type:"interval", hours:18, image:"Pictures/Lady Dalia.png"},
+{ name:"General Aquleus", type:"interval", hours:29, image:"Pictures/General Aquleus.png"},
+{ name:"Amentis", type:"interval", hours:29, image:"Pictures/Amentis.png"},
+{ name:"Baron Braudmore", type:"interval", hours:32, image:"Pictures/Baron Braudmore.png"},
+{ name:"Wannitas", type:"interval", hours:48, image:"Pictures/Wannitas.png"},
+{ name:"Metus", type:"interval", hours:48, image:"Pictures/Metus.png"},
+{ name:"Duplican", type:"interval", hours:48, image:"Pictures/Duplican.png"},
+{ name:"Shuliar", type:"interval", hours:35, image:"Pictures/Shuliar.png"},
+{ name:"Gareth", type:"interval", hours:32, image:"Pictures/Gareth.png"},
+{ name:"Titore", type:"interval", hours:37, image:"Pictures/Titore.png"},
+{ name:"Larba", type:"interval", hours:35, image:"Pictures/Larba.png"},
+{ name:"Catena", type:"interval", hours:35, image:"Pictures/Catena.png"},
+{ name:"Secreta", type:"interval", hours:62, image:"Pictures/Secreta.png"},
+{ name:"Ordo", type:"interval", hours:62, image:"Pictures/Ordo.png"},
+{ name:"Asta", type:"interval", hours:62, image:"Pictures/Asta.png"},
+{ name:"Supore", type:"interval", hours:62, image:"Pictures/Supore.png"},
+
+{ name:"Clemantis", type:"fixed",
+schedule:[{day:1,time:"11:30"},{day:4,time:"19:00"}],
+image:"Pictures/Clemantis.png"},
+
+{ name:"Saphirus", type:"fixed",
+schedule:[{day:0,time:"17:00"},{day:2,time:"11:30"}],
+image:"Pictures/Saphirus.png"},
+
+{ name:"Neutro", type:"fixed",
+schedule:[{day:2,time:"19:00"},{day:4,time:"11:30"}],
+image:"Pictures/Neutro.png"},
+
+{ name:"Thymele", type:"fixed",
+schedule:[{day:1,time:"19:00"},{day:3,time:"11:30"}],
+image:"Pictures/Thymele.png"},
+
+{ name:"Milavy", type:"fixed",
+schedule:[{day:6,time:"15:00"}],
+image:"Pictures/Milavy.png"},
+
+{ name:"Ringor", type:"fixed",
+schedule:[{day:6,time:"17:00"}],
+image:"Pictures/Ringor.png"},
+
+{ name:"Roderick", type:"fixed",
+schedule:[{day:5,time:"19:00"}],
+image:"Pictures/Roderick.png"},
+
+{ name:"Auraq", type:"fixed",
+schedule:[{day:5,time:"22:00"},{day:3,time:"21:00"}],
+image:"Pictures/Auraq.png"},
+
+{ name:"Chaiflock", type:"fixed",
+schedule:[{day:6,time:"22:00"}],
+image:"Pictures/Chaiflock.png"},
+
+{ name:"Benji", type:"fixed",
+schedule:[{day:0,time:"21:00"}],
+image:"Pictures/Benji.png"},
+
+{ name:"Tumier", type:"fixed",
+schedule:[{day:0,time:"19:00"}],
+image:"Pictures/Tumier.png"}
+
+];
+/* ===== END BOSS LIST ===== */
+
+function getNextFixedSpawn(schedule){
+    const now = new Date();
+    let next = null;
+
+    schedule.forEach(s=>{
+        const target = new Date();
+        const [h,m] = s.time.split(":");
+        target.setHours(h,m,0,0);
+        const dayDiff = (s.day - now.getDay() + 7) % 7;
+        target.setDate(now.getDate() + dayDiff);
+        if(target <= now) target.setDate(target.getDate()+7);
+        if(!next || target < next) next = target;
+    });
+
+    return next;
+}
+
+function formatTime(ms){
+    const total = Math.floor(ms/1000);
+    const h = Math.floor(total/3600);
+    const m = Math.floor((total%3600)/60);
+    const s = total%60;
+    return `${h}h ${m}m ${s}s`;
+}
+
+function isSameDay(d1,d2){
+    return d1.getFullYear()===d2.getFullYear() &&
+           d1.getMonth()===d2.getMonth() &&
+           d1.getDate()===d2.getDate();
+}
+
+function isTomorrow(spawn, now){
+    const tomorrow = new Date(now);
+    tomorrow.setDate(now.getDate()+1);
+    return isSameDay(spawn, tomorrow);
+}
+
+function createCard(boss){
+    const card = document.createElement("div");
+    card.className="card";
+    card.dataset.spawn = Infinity;
+
+    if(boss.type==="interval"){
+        card.innerHTML=`
+        <img class="boss-img" src="${boss.image}">
+        <div class="card-content">
+            <div class="badge">Interval</div>
+            <div class="name">${boss.name} (${boss.hours}h)</div>
+            <div class="timer">Not Set</div>
+            <div class="spawn"></div>
+            <input type="time"
+                   id="input-${boss.name}"
+                   onfocus="isTyping=true"
+                   onblur="isTyping=false">
+            <button onclick="setDeath('${boss.name}',${boss.hours})">Set Death</button>
+        </div>`;
+    } else {
+        card.innerHTML=`
+        <img class="boss-img" src="${boss.image}">
+        <div class="card-content">
+            <div class="badge">Fixed</div>
+            <div class="name">${boss.name}</div>
+            <div class="timer">--</div>
+            <div class="spawn"></div>
+            <div class="fixed">Weekly Spawn</div>
+        </div>`;
+    }
+
+    document.getElementById("soonGrid").appendChild(card);
+}
+
+function updateTimers(){
+    const now = new Date();
+    const cards = Array.from(document.querySelectorAll(".card"));
+
+    cards.forEach(card=>{
+        const bossName = card.querySelector(".name").innerText.split(" (")[0];
+        const boss = bosses.find(b=>b.name===bossName);
+        if(!boss) return;
+
+        const timerEl = card.querySelector(".timer");
+        const spawnEl = card.querySelector(".spawn");
+
+        let spawn;
+
+        if(boss.type==="interval"){
+            const saved = cloudData[boss.name];
+            if(!saved){
+                timerEl.innerText="Not Set";
+                card.dataset.spawn = Infinity;
+                return;
+            }
+            spawn = new Date(saved);
+        } else {
+            spawn = getNextFixedSpawn(boss.schedule);
+        }
+
+        const remaining = spawn - now;
+        card.dataset.spawn = spawn.getTime();
+
+        if(remaining>0){
+            timerEl.classList.remove("ready","warning");
+            if(remaining<=3600000) timerEl.classList.add("warning");
+            timerEl.innerText=formatTime(remaining);
+
+            const converted = convertTimezone(spawn);
+            spawnEl.innerText="Spawn: "+converted.toLocaleString();
+        } else {
+            timerEl.classList.remove("warning");
+            timerEl.classList.add("ready");
+            timerEl.innerText="🔥 READY";
+        }
+    });
+}
+
+function sortBosses(){
+    if(isTyping) return;
+
+    const now = new Date();
+    const today = document.getElementById("todayGrid");
+    const tomorrow = document.getElementById("tomorrowGrid");
+    const soon = document.getElementById("soonGrid");
+
+    const cards = Array.from(document.querySelectorAll(".card"));
+
+    cards.sort((a,b)=>{
+        return (Number(a.dataset.spawn)||Infinity) -
+               (Number(b.dataset.spawn)||Infinity);
+    });
+
+    cards.forEach(card=>{
+        const spawnTime = Number(card.dataset.spawn);
+        if(!spawnTime || spawnTime===Infinity){
+            soon.appendChild(card);
+            return;
+        }
+
+        const spawnDate = new Date(spawnTime);
+
+        if(isSameDay(spawnDate, now)) today.appendChild(card);
+        else if(isTomorrow(spawnDate, now)) tomorrow.appendChild(card);
+        else soon.appendChild(card);
+    });
+}
+
+function setDeath(name,hours){
+    const input = document.getElementById("input-"+name).value;
+    if(!input) return;
+
+    const [h,m] = input.split(":");
+    const death = new Date();
+    death.setHours(h,m,0,0);
+
+    const spawn = death.getTime() + hours*3600000;
+    db.ref("bossTimers/"+name).set(spawn);
+}
+
+db.ref("bossTimers").on("value",snap=>{
+    cloudData = snap.val() || {};
+});
+
+bosses.forEach(createCard);
+
+setInterval(()=>{
+    updateTimers();
+    sortBosses();
+},1000);
+
+</script>
+</body>
+</html>
