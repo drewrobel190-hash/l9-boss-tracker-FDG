@@ -36,27 +36,15 @@ body::before{
 
 
 
-header{
-    padding:20px;
-    font-size:24px;
-    font-weight:bold;
-    border-bottom:2px solid #1f2c3a;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    background:rgba(0,0,0,0.4);
-    backdrop-filter:blur(6px);
-    position:relative;
-}
 
 .header-left{
     flex:1;
 }
 
 .header-center{
-    position:absolute;
-    left:50%;
-    transform:translateX(-50%);
+    flex:1;
+    display:flex;
+    justify-content:center;
 }
 
 .header-right{
@@ -65,33 +53,8 @@ header{
     justify-content:flex-end;
 }
 
-select{
-    appearance:none;
-    -webkit-appearance:none;
-    -moz-appearance:none;
-}
-
-
-select{
-    padding:10px 40px 10px 14px;
-    background:linear-gradient(145deg,#0f1418,#1a1f25);
-    color:#fff;
-    border:1px solid #333;
-    border-radius:12px;
-    font-weight:bold;
-    cursor:pointer;
-    outline:none;
-    transition:all 0.3s ease;
-    box-shadow:0 0 12px rgba(0,0,0,0.6);
-    appearance:none;
-    position:relative;
-}
 
 /* Glowing border on hover */
-select:hover{
-    border-color:#4da6ff;
-    box-shadow:0 0 15px rgba(77,166,255,0.6);
-}
 
 
 
@@ -113,9 +76,10 @@ select option{
 }
 
 select{
-    padding:10px 40px 10px 14px;
+    padding:8px 14px;
     background:linear-gradient(145deg,#0f1418,#1a1f25);
     color:#fff;
+    font-size:15px;
     border:1px solid #333;
     border-radius:12px;
     font-weight:bold;
@@ -126,7 +90,13 @@ select{
     appearance:none;
     -webkit-appearance:none;
     -moz-appearance:none;
+
+    width:auto;
+    min-width:130px;
+    max-width:100%;
 }
+
+
 
 
 
@@ -140,7 +110,8 @@ header{
     justify-content:space-between;
     background:rgba(0,0,0,0.6);
     backdrop-filter:blur(8px);
-
+    flex-wrap: wrap;
+    gap:10px;
     position:sticky;   
     top:0;             
     z-index:9999;      
@@ -168,17 +139,230 @@ header{
 
 .grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap:20px;
 }
 
+
+/* Tablet */
+@media (max-width:1200px){
+    .grid{
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Mobile */
+@media (max-width:768px){
+    .grid{
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Small Phones */
+@media (max-width:480px){
+    .grid{
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+
+
+/* ================= CARD BASE ================= */
+
 .card{
-    display:flex;
+    position:relative;
+    display:flex; /* keep original horizontal layout */
     background:#2a313a;
     border-radius:12px;
     overflow:hidden;
-    transition:0.3s ease;
     border-left:4px solid #2196f3;
+    transition:transform 0.3s ease, background 0.3s ease;
+    width:100%;
+    
+
+}
+
+.card:hover{
+    transform:translateY(-4px);
+    background:#313b45;
+}
+
+/* ================= MAIN CONTENT ================= */
+
+.card-main{
+    display:flex;
+    width:100%;
+    transition:opacity 0.3s ease;
+}
+
+.card-content{
+    padding:15px;
+    flex:1;
+}
+
+/* ================= OVERLAY ================= */
+
+.details-overlay{
+    position:absolute;
+    inset:0;
+    background:rgba(15,20,28,0.96);
+    display:flex;
+    align-items:center;   /* CHANGE THIS */
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.3s ease;
+    border-radius:12px;
+}
+
+
+
+/* Fade in when active */
+.card.show-details .details-overlay{
+    opacity:1;
+    pointer-events:auto;
+}
+
+/* Fade out main when overlay active */
+.card.show-details .card-main{
+    opacity:0;
+}
+
+/* ================= LOOT BOX ================= */
+
+.details-box h3{
+    transition: opacity 0.3s ease;
+}
+
+.details-box h3.fade-out{
+    opacity: 0;
+}
+
+.details-box{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.details-center{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+}
+
+.details-topbar{
+    position:absolute;
+    top:12px;
+    right:12px;
+    z-index:10;
+}
+
+
+
+
+.boss-menu{
+    width:22px;
+    cursor:pointer;
+}
+
+.boss-menu span{
+    display:block;
+    height:3px;
+    background:#fff;
+    margin:4px 0;
+    border-radius:2px;
+    transition:0.3s;
+}
+
+.boss-menu.active span:nth-child(1){
+    transform:rotate(45deg) translate(5px,5px);
+}
+
+.boss-menu.active span:nth-child(2){
+    opacity:0;
+}
+
+.boss-menu.active span:nth-child(3){
+    transform:rotate(-45deg) translate(6px,-6px);
+}
+
+
+.boss-dropdown{
+    position:absolute;
+    top:45px;           /* distance below menu button */
+    right:15px;
+
+    background:#1c222a;
+    padding:0 10px;
+    border-radius:8px;
+    font-size:13px;
+
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:all 0.3s ease;
+
+    box-shadow:0 10px 25px rgba(0,0,0,0.5);
+}
+
+
+.boss-dropdown.active{
+    max-height:200px;
+    padding:10px;
+    opacity:1;
+}
+
+
+.boss-dropdown p{
+    margin:4px 0;
+}
+
+
+.loot-grid{
+    display:flex; /* same horizontal layout like your image */
+    gap:12px;
+    justify-content:center;
+}
+
+/* ================= LOOT SLOT ================= */
+
+.loot-slot{
+    width:60px;
+    height:60px;
+    background:#2b3138;
+    border:2px solid #3b4755;
+    border-radius:6px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    transition:all 0.2s ease;
+}
+/* Darken + disable when menu open */
+.details-overlay.menu-open .loot-slot{
+    opacity:0.3;
+    pointer-events:none;
+    filter:brightness(0.6);
+    transition:0.3s ease;
+}
+
+
+.loot-slot img{
+    width:45px;
+    height:45px;
+    object-fit:contain;
+}
+
+.loot-slot:hover{
+    transform:scale(1.1);
+    border-color:#4da6ff;
+    box-shadow:0 0 12px rgba(77,166,255,0.7);
 }
 
 .card:hover{
@@ -255,6 +439,8 @@ button{
     cursor:pointer;
     transition:all 0.3s ease;
     box-shadow:0 0 8px rgba(255,0,0,0.3);
+    font-size:15px;
+    white-space:nowrap;
 }
 
 .admin-btn:hover{
@@ -349,6 +535,405 @@ button{
 .drop-img:hover{
     transform:scale(1.2);
 }
+.name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: visible;
+}
+
+
+.name-scroll {
+    display: inline-flex;
+    white-space: nowrap;
+    animation-name: tickerLoop;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+
+.name-scroll span {
+    padding-right: 50px;
+}
+
+@keyframes tickerLoop {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+.name-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+
+.popup-item-img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    border-radius: 8px;
+    border: 2px solid #333;
+    flex-shrink: 0;
+}
+
+.title-text {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.item-popup{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.75);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
+    z-index:99999;
+}
+
+.item-popup.active{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.item-box{
+    background:#1f2730;
+    padding:25px;
+    border-radius:12px;
+    width:320px;
+    text-align:left;
+    box-shadow:0 0 20px rgba(0,0,0,0.6);
+    animation:fadeIn 0.2s ease;
+    overflow: visible; /* ADD THIS */
+}
+
+
+
+.item-box h3{
+    margin-top:0;
+    margin-bottom:10px;
+}
+
+
+
+@keyframes fadeIn{
+    from{ transform:scale(0.9); opacity:0; }
+    to{ transform:scale(1); opacity:1; }
+}
+
+.rarity-epic {
+    color: #c084fc;
+    font-weight: bold;
+
+    text-shadow:
+        0 0 4px rgba(192, 132, 252, 0.5),
+        0 0 8px rgba(236, 72, 153, 0.3);
+}
+
+/* ================= LEGENDARY ================= */
+
+.name-legendary,
+.rarity-legendary {
+    font-weight: bold;
+
+    background: linear-gradient(
+        90deg,
+        #ffd54f,
+        #ff9800,
+        #ff6f00,
+        #ff9800,
+        #ffd54f
+    );
+    background-size: 200% auto;
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow:
+        0 0 6px rgba(255, 200, 0, 0.7),
+        0 0 14px rgba(255, 140, 0, 0.6),
+        0 0 25px rgba(255, 100, 0, 0.5);
+
+    animation: mythicRadiant 3s linear infinite; /* SAME as mythic */
+}
+
+
+
+
+
+@keyframes legendaryRarityGlow {
+    0% {
+        text-shadow:
+            0 0 3px rgba(255, 200, 0, 0.3),
+            0 0 6px rgba(255, 140, 0, 0.25);
+    }
+    50% {
+        text-shadow:
+            0 0 8px rgba(255, 200, 0, 0.6),
+            0 0 15px rgba(255, 140, 0, 0.4);
+    }
+    100% {
+        text-shadow:
+            0 0 3px rgba(255, 200, 0, 0.3),
+            0 0 6px rgba(255, 140, 0, 0.25);
+    }
+}
+
+
+
+.name-epic {
+    color: #c084fc; /* soft radiant purple */
+
+    text-shadow:
+        0 0 4px rgba(192, 132, 252, 0.5),
+        0 0 10px rgba(236, 72, 153, 0.35),
+        0 0 18px rgba(168, 85, 247, 0.25);
+}
+
+
+
+.name-mythic {
+    font-weight: bold;
+
+    background: linear-gradient(
+        90deg,
+        #4b0000,
+        #ff1a1a,
+        #990000,
+        #ff1a1a,
+        #4b0000
+    );
+    background-size: 200% auto;
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow:
+        0 0 6px rgba(255, 0, 0, 0.6),
+        0 0 15px rgba(150, 0, 0, 0.5),
+        0 0 30px rgba(0, 0, 0, 0.6);
+
+    animation: mythicRadiant 3s linear infinite;
+}
+
+/* ================= MYTHIC ================= */
+
+.name-mythic,
+.rarity-mythic {
+    font-weight: bold;
+
+    background: linear-gradient(
+        90deg,
+        #3a0000,
+        #ff1a1a,
+        #7a0000,
+        #ff1a1a,
+        #3a0000
+    );
+    background-size: 200% auto;
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    text-shadow:
+        0 0 8px rgba(255, 0, 0, 0.9),
+        0 0 18px rgba(180, 0, 0, 0.8),
+        0 0 35px rgba(120, 0, 0, 0.7),
+        0 0 60px rgba(0, 0, 0, 0.8);
+
+    animation: mythicRadiant 3s linear infinite;
+}
+
+
+@keyframes mythicRadiant {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+.name-scroll span {
+    display: inline-block;
+}
+
+.item-options {
+    max-height: 150px;
+    overflow-y: auto;
+    margin-top: 10px;
+    padding-right: 6px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.item-options {
+    max-height: 180px;
+    overflow-y: auto;
+    margin-top: 10px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 0;   /* remove extra top space */
+    font-size: 13px;
+}
+
+
+/* HEADER ROW */
+.option-header {
+    display: grid;
+    grid-template-columns: 1fr 60px 80px;
+    padding: 8px 0;
+    font-weight: bold;
+    color: #aaa;
+
+    position: sticky;
+    top: 0;
+
+    background: #1f2730;
+    z-index: 5;
+
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+
+/* OPTION ROW */
+.option-row {
+    display: grid;
+    grid-template-columns: 1fr 60px 80px;
+    padding: 4px 0;
+    align-items: center;
+}
+
+.option-row span:nth-child(2) {
+    text-align: right;
+}
+
+.option-row span:nth-child(3) {
+    text-align: right;
+    color: #4da6ff;
+}
+
+/* ===== CUSTOM SCROLLBAR ===== */
+.item-options::-webkit-scrollbar {
+    width: 8px;
+}
+
+.item-options::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+}
+
+.item-options::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        180deg,
+        #4da6ff,
+        #2563eb
+    );
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(77,166,255,0.6);
+}
+
+.item-options::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+        180deg,
+        #60a5fa,
+        #1d4ed8
+    );
+}
+
+/* ===== MAIN PAGE SCROLLBAR ===== */
+
+/* Width */
+body::-webkit-scrollbar {
+    width: 12px;
+}
+
+/* Track (background) */
+body::-webkit-scrollbar-track {
+    background: #0a0f14;
+    border-left: 1px solid #1f2c3a;
+}
+
+/* Thumb (the draggable part) */
+body::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        180deg,
+        #1e2a38,
+        #243447,
+        #1e2a38
+    );
+    border-radius: 10px;
+    border: 2px solid #0a0f14;
+}
+
+/* Hover effect */
+body::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+        180deg,
+        #4da6ff,
+        #2196f3,
+        #4da6ff
+    );
+}
+
+/* Tablet */
+@media (max-width:900px){
+    select{
+        min-width:130px;
+        font-size:14px;
+        padding:6px 10px;
+    }
+}
+
+/* Mobile */
+@media (max-width:600px){
+
+    header{
+        justify-content:center;
+        text-align:center;
+    }
+
+    .header-left,
+    .header-center,
+    .header-right{
+        flex:100%;
+        display:flex;
+        justify-content:center;
+    }
+
+    select,
+    .admin-btn{
+        width:100%;
+        max-width:280px;
+    }
+}
+
+.dev-banner{
+    text-align:center;
+    padding:10px;
+    font-size:14px;
+    font-weight:bold;
+    letter-spacing:1px;
+
+    background:linear-gradient(
+        90deg,
+        #ff9800,
+        #ff3b3b,
+        #ff9800
+    );
+    background-size:200% auto;
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+
+    animation:devGlow 4s linear infinite;
+}
+
+@keyframes devGlow{
+    0%{ background-position:0% center; }
+    100%{ background-position:200% center; }
+}
+
 
 
 </style>
@@ -374,6 +959,9 @@ button{
 </header>
 
 </header>
+<div class="dev-banner">
+    Still doing crazy stuff on this website.
+</div>
 
 <div class="section">
 <h2>🔥 Today</h2>
@@ -389,7 +977,9 @@ button{
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+
 <script>
+
 const firebaseConfig = {
   apiKey: "AIzaSyD0-Lmvx-dmxvQcb_b4T3U-D4sdadH9Y3g",
   authDomain: "l9-boss-tracker.firebaseapp.com",
@@ -403,10 +993,195 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let cloudData = {};
+
+let cloudData = JSON.parse(localStorage.getItem("demoTimers")) || {};
 let isTyping = false;
 let isAdmin = false;
 let expandedCard = null;
+
+function resetCardState(card){
+    if(!card) return;
+
+    // Close dropdown
+    const dropdown = card.querySelector(".boss-dropdown");
+    const menuBtn = card.querySelector(".boss-menu");
+    const overlay = card.querySelector(".details-overlay");
+    const title = card.querySelector(".details-box h3");
+
+    if(dropdown) dropdown.classList.remove("active");
+    if(menuBtn) menuBtn.classList.remove("active");
+    if(overlay) overlay.classList.remove("menu-open");
+    if(title) title.classList.remove("fade-out");
+}
+
+
+document.addEventListener("click", function(e){
+
+    // ================= LOOT CLICK =================
+    const loot = e.target.closest(".loot-slot");
+    if(loot){
+
+    const popup = document.getElementById("itemPopup"); 
+
+const nameEl = document.getElementById("itemName");
+const rarityEl = document.getElementById("itemRarity");
+const rarity = (loot.dataset.rarity || "").toLowerCase();
+
+const type = (loot.dataset.type || "").toLowerCase();
+
+const weaponKeywords = [
+    "staff",
+    "battle staff",
+    "shield",
+    "sword and shield",
+    "crossbow",
+    "bow",
+    "greatsword",
+    "knuckles"
+];
+
+const isWeapon = weaponKeywords.some(keyword => type.includes(keyword));
+
+// Reset old classes
+nameEl.className = "";
+rarityEl.className = "";
+
+// Set text
+nameEl.innerText = loot.dataset.name || "";
+setTimeout(() => {
+
+    const wrapper = nameEl.parentElement;
+
+    if (nameEl.scrollWidth > wrapper.clientWidth) {
+
+        const text = loot.dataset.name;
+
+        nameEl.innerHTML = `
+            <span>${text}</span>
+            <span>${text}</span>
+        `;
+
+        const totalWidth = nameEl.scrollWidth;
+        const speed = totalWidth / 60; // adjust speed here
+
+        nameEl.style.animationDuration = speed + "s";
+        nameEl.classList.add("name-scroll");
+
+    } else {
+        nameEl.classList.remove("name-scroll");
+        nameEl.innerText = loot.dataset.name;
+    }
+
+}, 50);
+
+
+
+rarityEl.innerText = "Rarity: " + (loot.dataset.rarity || "");
+
+// Apply rarity colors
+if(rarity === "epic") {
+    nameEl.classList.add("name-epic");
+    rarityEl.classList.add("rarity-epic");
+}
+else if(rarity === "legendary") {
+    nameEl.classList.add("name-legendary");
+    rarityEl.classList.add("rarity-legendary");
+}
+else if(rarity === "mythic") {
+    nameEl.classList.add("name-mythic");
+    rarityEl.classList.add("rarity-mythic");
+}
+
+
+
+    document.getElementById("itemType").innerText = loot.dataset.type || "";
+
+    const statsText = loot.dataset.stats || "";
+    document.getElementById("itemStats").innerHTML =
+        statsText.replaceAll("|", "<br>");
+
+    
+    document.getElementById("itemLocation").innerText = loot.dataset.location || "";
+    document.getElementById("itemImage").src = loot.querySelector("img").src;
+    // ================= OPTIONS RENDER =================
+const optionsContainer = document.getElementById("itemOptions");
+optionsContainer.innerHTML = "";
+if (rarity === "epic" && isWeapon) {
+
+    const header = document.createElement("div");
+    header.className = "option-header";
+    header.innerHTML = `
+        <span>Option Name</span>
+        <span>Stats</span>
+        <span>Success Rate</span>
+    `;
+    optionsContainer.appendChild(header);
+
+    epicOptions.forEach(opt => {
+        const row = document.createElement("div");
+        row.className = "option-row";
+        row.innerHTML = `
+            <span>${opt.name}</span>
+            <span>${opt.value}</span>
+            <span>${opt.success}</span>
+        `;
+        optionsContainer.appendChild(row);
+    });
+}
+
+
+    
+
+document.getElementById("itemDesc").innerText = isWeapon 
+    ? "" 
+    : (loot.dataset.desc || "");
+
+
+    popup.classList.add("active");
+    document.body.style.overflow = "hidden";
+
+    return;
+}
+
+
+    // ================= CLOSE POPUP =================
+    if(e.target.id === "itemPopup"){
+        document.getElementById("itemPopup").classList.remove("active");
+        document.body.style.overflow = "auto";
+
+        return;
+    }
+
+    // ================= BOSS CARD =================
+    const card = e.target.closest(".card");
+
+   if(!card){
+    if(expandedCard){
+        resetCardState(expandedCard);
+        expandedCard.classList.remove("show-details");
+        expandedCard = null;
+    }
+    return;
+}
+
+    if(e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
+
+   if(expandedCard && expandedCard !== card){
+    resetCardState(expandedCard);
+    expandedCard.classList.remove("show-details");
+}
+
+
+    if(card.classList.contains("show-details")){
+        card.classList.remove("show-details");
+        expandedCard = null;
+    } else {
+        card.classList.add("show-details");
+        expandedCard = card;
+    }
+
+});
+
 
 
 /* ===== TIMEZONE LOCAL STORAGE UPGRADE ===== */
@@ -449,7 +1224,23 @@ function adminLogin(){
 /* ===== FULL BOSS LIST ===== */
 const bosses = [
 
-{ name:"Venatus", type:"interval", hours:10, image:"Pictures/Venatus.png"},
+{
+  name: "Venatus",
+  type: "interval",
+  hours: 10,
+  image: "Pictures/Venatus.png",
+
+  info: "Ancient dragon of the abyss.",
+  location: "Forgotten Canyon",
+  weakness: "Lightning",
+  recommended: "5-7 Players",
+
+  drops: [
+      { name: "Delphon Saddle", rarity:"Mythic", type:"Mount Ticket" },
+      { name: "Azzam Hissan Knuckles", rarity:"Epic", type:"Knuckles" }
+  ]
+},
+
 { name:"Viorent", type:"interval", hours:10, image:"Pictures/Viorent.png"},
 { name:"Ego", type:"interval", hours:21, image:"Pictures/Ego.png"},
 { name:"Livera", type:"interval", hours:24, image:"Pictures/Livera.png"},
@@ -557,42 +1348,330 @@ function isTomorrow(spawn, now){
     tomorrow.setDate(now.getDate()+1);
     return isSameDay(spawn, tomorrow);
 }
+const lootData = {
+    Venatus: [
+
+{
+    name: "Delphon Saddle",
+    rarity: "Mythic",
+    type: "Mount Summon Ticket",
+    img: "Boss loots/1.Venatus/Delphon Saddle.png",
+    desc: "A saddle used to obtain Mount Delphon. If you already own the mount, you will receive 4 Mount Parts instead.",
+    stats: ""
+},
+
+{
+    name: "Azzam Hissan Knuckles",
+    rarity: "Epic",
+    type: "Knuckles",
+    img: "Boss loots/1.Venatus/Azzam Hissan Knuckles.png",
+    desc: "Epic knuckles infused with battle power.",
+    stats: "Melee Attack: 200 | Additional Option: 3 Options"
+},
+
+{
+    name: "Azzam Hissan Sword and Shield",
+    rarity: "Epic",
+    type: "Sword and Shield",
+    img: "Boss loots/1.Venatus/Azzam hissan Sword And Shield.png",
+    desc: "Epic sword and shield set crafted for frontline combat.",
+    stats: "Melee Attack: 540 | Additional Option: 3 Options"
+},
+
+{
+    name: "Azzam Hissan Battle Staff",
+    rarity: "Epic",
+    type: "Battle Staff",
+    img: "Boss loots/1.Venatus/Azzam Hissan Battle Staff.png",
+    desc: "Epic battle staff infused with arcane energy.",
+    stats: "Magic Attack: 565 | Additional Option: 3 Options"
+}
+
+],
+Viorent: [
+
+{
+    name: "Lamphon Saddle",
+    rarity: "Legendary",
+    type: "Mount Summon Ticket",
+    img: "Boss loots/2.Viorent/Lamphon Saddle.png",
+    desc: "A saddle used to obtain Mount Lamphon. If you already own the mount, you will receive 3 Mount Parts instead.",
+    stats: ""
+},
+
+{
+    name: "Serad Knuckles",
+    rarity: "Epic",
+    type: "Knuckles",
+    img: "Boss loots/2.Viorent/Serad Knuckles.png",
+    desc: "Epic knuckles forged with brutal combat energy.",
+    stats: "Melee Attack 204 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serad Battle Staff",
+    rarity: "Epic",
+    type: "Battle Staff",
+    img: "Boss loots/2.Viorent/Serad Battle Staff.png",
+    desc: "Epic staff infused with arcane destructive power.",
+    stats: "Magic Attack 580 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serad Battle Shield",
+    rarity: "Epic",
+    type: "Battle Shield",
+    img: "Boss loots/2.Viorent/Serad Battle Shield.png",
+    desc: "Epic shield crafted for frontline domination.",
+    stats: "Melee Attack 525 | Additional Option: 3 Options"
+}
+
+],
+Ego: [
+
+{
+    name: "Serad Knuckles",
+    rarity: "Epic",
+    type: "Knuckles",
+    img: "Boss loots/3.Ego/Serad Knuckles.png",
+    desc: "",
+    stats: "Melee Attack 204 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serad Sword and Shield",
+    rarity: "Epic",
+    type: "Sword and Shield",
+    img: "Boss loots/3.Ego/Serad Sword and Shield.png",
+    desc: "",
+    stats: "Melee Attack 550 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serad Battle Staff",
+    rarity: "Epic",
+    type: "Battle Staff",
+    img: "Boss loots/3.Ego/Serad Battle Staff.png",
+    desc: "",
+    stats: "Magic Attack 580 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serad Staff",
+    rarity: "Epic",
+    type: "Staff",
+    img: "Boss loots/3.Ego/Serad Staff.png",
+    desc: "",
+    stats: "Magic Attack 525 | Additional Option: 3 Options"
+}
+
+],
+
+Clemantis: [
+    {
+    name: "Somnium Saddle",
+    rarity: "Mythic",
+    type: "Mount Summon Ticket",
+    img: "Boss loots/4.Clemantis/Somnium Saddle.png",
+    desc: "A saddle used to obtain Mount Somnium. If you already own the mount, you will receive 4 Mount Parts instead.",
+    stats: ""
+},
+{
+    name: "Serad Sword and Shield",
+    rarity: "Epic",
+    type: "Sword and Shield",
+    img: "Boss loots/4.Clemantis/Serad Sword and Shield.png",
+    desc: "",
+    stats: "Melee Attack 550 | Additional Option: 3 Options"
+},
+{
+    name: "Serad Greatsword",
+    rarity: "Epic",
+    type: "Greatsword",
+    img: "Boss loots/4.Clemantis/Serad Greatsword.png",
+    desc: "",
+    stats: "Melee Attack 605 | Additional Option: 3 Options"
+},
+{
+    name: "Serad Staff",
+    rarity: "Epic",
+    type: "Staff",
+    img: "Boss loots/4.Clemantis/Serad Staff.png",
+    desc: "",
+    stats: "Magic Attack 525 | Additional Option: 3 Options"
+},
+
+   
+],
+ Livera: [
+{
+    name: "Ability: Lightning Spirit [Enhance]",
+    rarity: "Legendary",
+    type: "Ability Book",
+    img: "Boss loots/5.Livera/Ability Lightning Spirit.png",
+    desc: "Use to acquire Ability [Lightning Spirit].",
+    stats: ""
+},
+
+{
+    name: "Petrolov Saddle",
+    rarity: "Legendary",
+    type: "Mount Summon Ticket",
+    img: "Boss loots/5.Livera/Petrolov Saddle.png",
+    desc: "A saddle used to obtain Mount Petrolov. If you already own the mount, you will receive 3 Mount Parts instead.",
+    stats: ""
+},
+
+{
+    name: "Serbis Battle Shield",
+    rarity: "Epic",
+    type: "Battle Shield",
+    img: "Boss loots/5.Livera/Serbis Battle Shield.png",
+    desc: "",
+    stats: "Melee Attack: 530 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serbis Greatsword",
+    rarity: "Epic",
+    type: "Greatsword",
+    img: "Boss loots/5.Livera/Serbis Greatsword.png",
+    desc: "",
+    stats: "Melee Attack: 615 | Additional Option: 3 Options"
+}
+
+ ],
+
+
+
+
+
+
+    Neutro: [
+        { 
+            name:"Void Staff",
+            img:"Pictures/loot3.png",
+            desc:"A mysterious staff infused with void energy.",
+            rarity:"Legendary",
+            location:"Dropped by Neutro"
+        }
+    ]
+};
+
+const epicOptions = [
+    { name: "Critical Hit Damage", value: "8%", success: "10%" },
+    { name: "All Damage in PvP", value: "11%", success: "10%" },
+    { name: "Attack Speed", value: "8%", success: "10%" },
+    { name: "Accuracy", value: "80", success: "10%" },
+    { name: "Endurance Ignore in PvP", value: "70", success: "10%" },
+    { name: "HP Recovery in Battle", value: "40", success: "10%" },
+    { name: "MP Recovery in Battle", value: "20", success: "10%" },
+    { name: "Gold Gain", value: "2%", success: "10%" },
+    { name: "Barrier Increase Rate", value: "4%", success: "10%" },
+    { name: "Skill MP Consumption Decrease", value: "2%", success: "10%" }
+];
+
+
 
 function createCard(boss){
     const card = document.createElement("div");
     card.className="card";
     card.dataset.spawn = Infinity;
 
-    if(boss.type==="interval"){
-        card.innerHTML=`
-        <img class="boss-img" src="${boss.image}">
-        <div class="card-content">
-            <div class="badge">Interval</div>
-            <div class="name">${boss.name} (${boss.hours}h)</div>
-            <div class="timer">Not Set</div>
-            <div class="spawn"></div>
-            <div class="admin-controls">
-                <input type="time"
-                       id="input-${boss.name}"
-                       onfocus="isTyping=true"
-                       onblur="isTyping=false">
-                <button onclick="setDeath('${boss.name}',${boss.hours})">Set Death</button>
+    const baseContent = boss.type === "interval" ? `
+        <div class="badge">Interval</div>
+        <div class="name">${boss.name} (${boss.hours}h)</div>
+        <div class="timer">Not Set</div>
+        <div class="spawn"></div>
+        <div class="admin-controls">
+            <input type="time"
+                   id="input-${boss.name}"
+                   onfocus="isTyping=true"
+                   onblur="isTyping=false">
+            <button onclick="setDeath('${boss.name}',${boss.hours})">
+                Set Death
+            </button>
+        </div>
+    ` : `
+        <div class="badge">Fixed</div>
+        <div class="name">${boss.name}</div>
+        <div class="timer">--</div>
+        <div class="spawn"></div>
+        <div class="fixed">Weekly Spawn</div>
+    `;
+
+  let lootHTML = "";
+
+if(lootData[boss.name] && lootData[boss.name].length > 0){
+    lootHTML = lootData[boss.name].map(item => `
+    <div class="loot-slot"
+         data-name="${item.name}"
+         data-desc="${item.desc || ''}"
+         data-rarity="${item.rarity || ''}"
+         data-type="${item.type || ''}"
+         data-stats="${item.stats || ''}"
+         data-location="${item.location || ''}">
+        <img src="${item.img || 'Pictures/placeholder.png'}" alt="${item.name}">
+    </div>
+`).join("");
+
+} else {
+    lootHTML = `
+        <div style="
+            grid-column: span 2;
+            opacity:0.6;
+            padding:20px;
+            text-align:center;
+        ">
+            No loot info yet
+        </div>
+    `;
+}
+
+
+
+
+
+    card.innerHTML = `
+    <img class="boss-img" src="${boss.image}">
+    <div class="card-content">
+        ${baseContent}
+    </div>
+
+    <div class="details-overlay">
+        <div class="details-box">
+
+            <!-- TOP GROUP -->
+            <div class="details-topbar">
+                <div class="boss-menu" onclick="toggleBossMenu(event, '${boss.name}')">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
-        </div>`;
-    } else {
-        card.innerHTML=`
-        <img class="boss-img" src="${boss.image}">
-        <div class="card-content">
-            <div class="badge">Fixed</div>
-            <div class="name">${boss.name}</div>
-            <div class="timer">--</div>
-            <div class="spawn"></div>
-            <div class="fixed">Weekly Spawn</div>
-        </div>`;
-    }
+
+            <div class="boss-dropdown" id="menu-${boss.name}">
+                <p><strong>Boss Info:</strong> ${boss.info || "Unknown boss"}</p>
+                <p><strong>Location:</strong> ${boss.location || "Unknown location"}</p>
+                <p><strong>Total Loot:</strong> ${(lootData[boss.name] || []).length}</p>
+            </div>
+
+            <!-- CENTER GROUP -->
+            <div class="details-center">
+                <h3>${boss.name} Loot</h3>
+                <div class="loot-grid">
+                    ${lootHTML}
+                </div>
+            </div>
+
+        </div>
+    </div>
+`;
+
 
     document.getElementById("soonGrid").appendChild(card);
 }
+
 
 function updateTimers(){
     const now = new Date();
@@ -728,12 +1807,15 @@ function setDeath(name,hours){
     death.setHours(h,m,0,0);
 
     const spawn = death.getTime() + hours*3600000;
+
     db.ref("bossTimers/"+name).set(spawn);
 }
 
 db.ref("bossTimers").on("value",snap=>{
     cloudData = snap.val() || {};
 });
+
+
 
 bosses.forEach(createCard);
 applyAdminMode();
@@ -749,18 +1831,63 @@ function applyAdminMode(){
 function startTimer(){
     updateTimers();
     setInterval(()=>{
-        updateTimers();
-        if (!isTyping) {
-    sortBosses();
+    updateTimers();
+    if (!isTyping) sortBosses();
+}, 1000);
+
+}
+function toggleBossMenu(event, bossName){
+    event.stopPropagation();
+
+    const menu = document.getElementById("menu-" + bossName);
+    const button = event.currentTarget;
+    const card = button.closest(".card");
+    const title = card.querySelector(".details-box h3");
+    const overlay = card.querySelector(".details-overlay");
+
+    const isActive = menu.classList.toggle("active");
+    button.classList.toggle("active");
+
+    if(isActive){
+        title.classList.add("fade-out");
+        overlay.classList.add("menu-open");
+    } else {
+        title.classList.remove("fade-out");
+        overlay.classList.remove("menu-open");
+    }
 }
 
-    });
-}
+
 
 startTimer();
 
 
 
 </script>
+<div id="itemPopup" class="item-popup">
+    <div class="item-box">
+
+        <div class="name-wrapper">
+            <img id="itemImage" class="popup-item-img">
+
+            <div class="title-text">
+                <h3 id="itemName"></h3>
+                <p id="itemRarity"></p>
+            </div>
+        </div>
+
+       <p id="itemType"></p>
+<p id="itemStats"></p>
+
+<div id="itemOptions" class="item-options"></div>
+
+<p id="itemDesc"></p>
+<p id="itemLocation"></p>
+
+    </div>
+</div>
+
+
+
 </body>
 </html>
