@@ -65,22 +65,36 @@ header{
     justify-content:flex-end;
 }
 
+select{
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
+}
+
 
 select{
-    padding:10px 14px;
+    padding:10px 40px 10px 14px;
     background:linear-gradient(145deg,#0f1418,#1a1f25);
     color:#fff;
     border:1px solid #333;
-    border-radius:10px;
+    border-radius:12px;
     font-weight:bold;
     cursor:pointer;
     outline:none;
     transition:all 0.3s ease;
     box-shadow:0 0 12px rgba(0,0,0,0.6);
     appearance:none;
+    position:relative;
 }
 
-/* Glow when active */
+/* Glowing border on hover */
+select:hover{
+    border-color:#4da6ff;
+    box-shadow:0 0 15px rgba(77,166,255,0.6);
+}
+
+
+
 select:hover{
     border-color:#ff9800;
     box-shadow:0 0 15px rgba(255,152,0,0.5);
@@ -99,14 +113,21 @@ select option{
 }
 
 select{
-    background-image:
-        linear-gradient(145deg,#0f1418,#1a1f25),
-        url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-    background-repeat:no-repeat;
-    background-position:right 10px center;
-    background-size:16px;
-    padding-right:35px;
+    padding:10px 40px 10px 14px;
+    background:linear-gradient(145deg,#0f1418,#1a1f25);
+    color:#fff;
+    border:1px solid #333;
+    border-radius:12px;
+    font-weight:bold;
+    cursor:pointer;
+    outline:none;
+    transition:all 0.3s ease;
+    box-shadow:0 0 12px rgba(0,0,0,0.6);
+    appearance:none;
+    -webkit-appearance:none;
+    -moz-appearance:none;
 }
+
 
 
 header{
@@ -115,11 +136,16 @@ header{
     font-weight:bold;
     border-bottom:2px solid #1f2c3a;
     display:flex;
-    justify-content:space-between;
     align-items:center;
-    background:rgba(0,0,0,0.4);
-    backdrop-filter:blur(6px);
+    justify-content:space-between;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(8px);
+
+    position:sticky;   
+    top:0;             
+    z-index:9999;      
 }
+
 
 #todayGrid .card{
     border-left:4px solid #ff3b3b;
@@ -262,6 +288,68 @@ button{
     100%{ background-position:200% center; }
 }
 
+.select-wrapper{
+    position:relative;
+    display:inline-block;
+}
+
+.select-wrapper::after{
+    content:"▼";
+    position:absolute;
+    right:14px;
+    top:50%;
+    transform:translateY(-50%);
+    pointer-events:none;
+    color:#4da6ff;
+    font-size:14px;
+    transition:transform 0.3s ease, color 0.3s ease;
+}
+
+/* Rotate arrow when focused */
+.select-wrapper:focus-within::after{
+    transform:translateY(-50%) rotate(180deg);
+    color:#ff9800;
+}
+
+/* 🔥 CLICK EXPAND DETAILS */
+
+.boss-details{
+    max-height:0;
+    overflow:hidden;
+    opacity:0;
+    transition:max-height 0.4s ease, opacity 0.3s ease;
+}
+
+.card.expanded .boss-details{
+    max-height:250px;
+    opacity:1;
+    margin-top:10px;
+}
+
+.details-content{
+    background:#1c222a;
+    padding:10px;
+    border-radius:8px;
+    margin-top:8px;
+}
+
+.drops{
+    display:flex;
+    gap:10px;
+    margin-top:8px;
+}
+
+.drop-img{
+    width:40px;
+    height:40px;
+    border-radius:6px;
+    transition:transform 0.2s ease;
+}
+
+.drop-img:hover{
+    transform:scale(1.2);
+}
+
 
 </style>
 </head>
@@ -273,7 +361,7 @@ button{
     <span class="site-title">🔥 L9 Boss Tracker (AzteczX4龙)</span>
 </div>
 
-    <div class="header-center">
+    <div class="header-center" class="select-wrapper">
         <select id="timezoneSelect">
             <option value="8">Philippines (UTC+8)</option>
             <option value="7">Indonesia / Thailand (UTC+7)</option>
@@ -318,20 +406,21 @@ const db = firebase.database();
 let cloudData = {};
 let isTyping = false;
 let isAdmin = false;
+let expandedCard = null;
 
 
 /* ===== TIMEZONE LOCAL STORAGE UPGRADE ===== */
 let selectedOffset = 8;
 const timezoneSelect = document.getElementById("timezoneSelect");
 
-// Load saved timezone
+
 const savedOffset = localStorage.getItem("timezoneOffset");
 if(savedOffset){
     selectedOffset = parseInt(savedOffset);
     timezoneSelect.value = savedOffset;
 }
 
-// Save when changed
+// tngina nakaka pressure 
 timezoneSelect.addEventListener("change", function(){
     selectedOffset = parseInt(this.value);
     localStorage.setItem("timezoneOffset", selectedOffset);
@@ -347,7 +436,7 @@ function adminLogin(){
     document.querySelector(".admin-btn").classList.add("active-admin");
     const password = prompt("Enter Admin Password:");
     
-    if(password === "1900"){   // change this later
+    if(password === "1900"){   // changeable By teshi
         isAdmin = true;
         alert("Admin mode activated");
         applyAdminMode();
@@ -417,7 +506,7 @@ image:"Pictures/Auraq.png"},
 
 { name:"Chaiflock", type:"fixed",
 schedule:[{day:6,time:"22:00"}],
-image:"Pictures/chaiflock.png"},
+image:"Pictures/Chaiflock.png"},
 
 { name:"Benji", type:"fixed",
 schedule:[{day:0,time:"21:00"}],
@@ -429,6 +518,8 @@ image:"Pictures/Tumier.png"}
 
 ];
 /* ===== END BOSS LIST ===== */
+
+
 
 function getNextFixedSpawn(schedule){
     const now = new Date();
@@ -448,7 +539,7 @@ function getNextFixedSpawn(schedule){
 }
 
 function formatTime(ms){
-    const total = Math.floor(ms/1000);
+    const total = Math.max(0, Math.ceil(ms/1000));
     const h = Math.floor(total/3600);
     const m = Math.floor((total%3600)/60);
     const s = total%60;
@@ -480,13 +571,13 @@ function createCard(boss){
             <div class="name">${boss.name} (${boss.hours}h)</div>
             <div class="timer">Not Set</div>
             <div class="spawn"></div>
-         <div class="admin-controls">
-    <input type="time"
-           id="input-${boss.name}"
-           onfocus="isTyping=true"
-           onblur="isTyping=false">
-    <button onclick="setDeath('${boss.name}',${boss.hours})">Set Death</button>
-</div>
+            <div class="admin-controls">
+                <input type="time"
+                       id="input-${boss.name}"
+                       onfocus="isTyping=true"
+                       onblur="isTyping=false">
+                <button onclick="setDeath('${boss.name}',${boss.hours})">Set Death</button>
+            </div>
         </div>`;
     } else {
         card.innerHTML=`
@@ -535,7 +626,8 @@ function updateTimers(){
         if(remaining>0){
             timerEl.classList.remove("ready","warning");
             if(remaining<=3600000) timerEl.classList.add("warning");
-            timerEl.innerText=formatTime(remaining);
+
+            timerEl.innerText = formatTime(remaining);
 
             const converted = convertTimezone(spawn);
             spawnEl.innerText = "Spawn: " + converted.toLocaleString([], {
@@ -545,7 +637,7 @@ function updateTimers(){
               hour: "numeric",
               minute: "2-digit",
               hour12: true
-});
+            });
 
         } else {
             timerEl.classList.remove("warning");
@@ -557,15 +649,17 @@ function updateTimers(){
 
 function sortBosses(){
     if(isTyping) return;
+    if(expandedCard) return;
 
     const now = new Date();
+
     const today = document.getElementById("todayGrid");
     const tomorrow = document.getElementById("tomorrowGrid");
     const soon = document.getElementById("soonGrid");
 
     const cards = Array.from(document.querySelectorAll(".card"));
 
-    // First separate by section logic
+    // Place cards into correct section
     cards.forEach(card=>{
         const spawnTime = Number(card.dataset.spawn);
 
@@ -592,31 +686,35 @@ function sortBosses(){
         }
     });
 
-    // 🔥 Now fix Coming Soon order ONLY
-    const soonCards = Array.from(soon.querySelectorAll(".card"));
+    // Sort each section by lowest remaining time
+    [today, tomorrow, soon].forEach(section=>{
 
-    soonCards.sort((a,b)=>{
-        const spawnA = Number(a.dataset.spawn);
-        const spawnB = Number(b.dataset.spawn);
+        const sectionCards = Array.from(section.querySelectorAll(".card"));
 
-        const hasTimerA = spawnA && spawnA !== Infinity;
-        const hasTimerB = spawnB && spawnB !== Infinity;
+        sectionCards.sort((a,b)=>{
 
-        // Timed bosses above Not Set
-        if(hasTimerA && !hasTimerB) return -1;
-        if(!hasTimerA && hasTimerB) return 1;
+            const spawnA = Number(a.dataset.spawn);
+            const spawnB = Number(b.dataset.spawn);
 
-        // Both timed → sort lowest first
-        if(hasTimerA && hasTimerB){
-            return spawnA - spawnB;
-        }
+            const hasA = spawnA && spawnA !== Infinity;
+            const hasB = spawnB && spawnB !== Infinity;
 
-        return 0;
-    });
+            if(hasA && !hasB) return -1;
+            if(!hasA && hasB) return 1;
+            if(!hasA && !hasB) return 0;
 
-    // Re-append in correct order (no innerHTML wipe)
-    soonCards.forEach(card=>{
-        soon.appendChild(card);
+            const remainingA = spawnA - now.getTime();
+            const remainingB = spawnB - now.getTime();
+
+            return remainingA - remainingB;
+        });
+
+        sectionCards.forEach((card,index)=>{
+            if(section.children[index] !== card){
+                section.insertBefore(card, section.children[index] || null);
+            }
+        });
+
     });
 }
 
@@ -640,20 +738,29 @@ db.ref("bossTimers").on("value",snap=>{
 bosses.forEach(createCard);
 applyAdminMode();
 
-
 function applyAdminMode(){
     const controls = document.querySelectorAll(".admin-controls");
-    
     controls.forEach(control=>{
         control.style.display = isAdmin ? "block" : "none";
     });
 }
 
-setInterval(updateTimers,1000);
-setInterval(sortBosses,3000);
+
+function startTimer(){
+    updateTimers();
+    setInterval(()=>{
+        updateTimers();
+        if (!isTyping) {
+    sortBosses();
+}
+
+    });
+}
+
+startTimer();
+
 
 
 </script>
 </body>
 </html>
-
