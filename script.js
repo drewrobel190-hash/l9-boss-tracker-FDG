@@ -64,7 +64,33 @@ const weaponKeywords = [
     "knuckles"
 ];
 
+const armorKeywords = [
+    // Cloth
+    "hat",
+    "robe",
+    "cloth pants",
+    "gloves",
+    "loafers",
+
+    // Leather
+    "hood",
+    "vest",
+    "leather pants",
+    "wristband",
+    "high boots",
+
+    // Plate
+    "helm",
+    "helmet",
+    "armor",
+    "gaiters",
+    "gauntlets",
+    "greaves"
+];
+
 const isWeapon = weaponKeywords.some(keyword => type.includes(keyword));
+const isArmor = armorKeywords.some(keyword => type.includes(keyword));
+
 
 // Reset old classes
 nameEl.className = "";
@@ -130,7 +156,22 @@ else if(rarity === "mythic") {
     // ================= OPTIONS RENDER =================
 const optionsContainer = document.getElementById("itemOptions");
 optionsContainer.innerHTML = "";
-if (rarity === "epic" && isWeapon) {
+optionsContainer.innerHTML = "";
+
+optionsContainer.innerHTML = "";
+
+let optionList = null;
+
+if (rarity === "epic") {
+    optionList = isWeapon ? epicOptions :
+                 isArmor ? epicArmorOptions : null;
+}
+else if (rarity === "legendary") {
+    optionList = isWeapon ? legendaryOptions :
+                 isArmor ? legendaryArmorOptions : null;
+}
+
+if (optionList) {
 
     const header = document.createElement("div");
     header.className = "option-header";
@@ -141,7 +182,7 @@ if (rarity === "epic" && isWeapon) {
     `;
     optionsContainer.appendChild(header);
 
-    epicOptions.forEach(opt => {
+    optionList.forEach(opt => {
         const row = document.createElement("div");
         row.className = "option-row";
         row.innerHTML = `
@@ -152,6 +193,7 @@ if (rarity === "epic" && isWeapon) {
         optionsContainer.appendChild(row);
     });
 }
+
 
 
     
@@ -599,17 +641,208 @@ Clemantis: [
 
  ],
 
+Araneo: [
+
+{
+    name: "Serbis Knuckles",
+    rarity: "Epic",
+    type: "Knuckles",
+    img: "Boss loots/6.Araneo/Serbis Knuckles.png",
+    desc: "",
+    stats: "Melee Attack: 208 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serbis Sword and Shield",
+    rarity: "Epic",
+    type: "Sword and Shield",
+    img: "Boss loots/6.Araneo/Serbis Sword and Shield.png",
+    desc: "",
+    stats: "Melee Attack: 560 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serbis Crossbow",
+    rarity: "Epic",
+    type: "Crossbow",
+    img: "Boss loots/6.Araneo/Serbis Crossbow.png",
+    desc: "",
+    stats: "Ranged Attack: 590 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serbis Helm +5",
+    rarity: "Epic",
+    type: "Helmet",
+    img: "Boss loots/6.Araneo/Serbis Helm.png",
+    desc: "",
+    stats: "Melee Defense: 111 | Ranged Defense: 83 | Magic Defense: 65 | Additional Option: 3 Options"
+}
+
+],
+
+Undomiel: [
+
+{
+    name: "Undemic Saddle",
+    rarity: "Mythic",
+    type: "Mount Summon Ticket",
+    img: "Boss loots/7.Undomiel/Undemic Saddle.png",
+    desc: "A saddle used to obtain Mount Undemic. If you already own the mount, you will receive 4 Mount Parts instead.",
+    stats: ""
+},
+
+{
+    name: "Serus Battle Staff",
+    rarity: "Legendary",
+    type: "Battle Staff",
+    img: "Boss loots/7.Undomiel/Serus Battle Staff.png",
+    desc: "",
+    stats: "Magic Attack: 885 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serus Staff",
+    rarity: "Legendary",
+    type: "Staff",
+    img: "Boss loots/7.Undomiel/Serus Staff.png",
+    desc: "",
+    stats: "Magic Attack: 805 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serus Dual Daggers",
+    rarity: "Legendary",
+    type: "Dual Daggers",
+    img: "Boss loots/7.Undomiel/Serus Dual Daggers.png",
+    desc: "",
+    stats: "Melee Attack: 805 | Additional Option: 3 Options"
+}
+
+],
+
+Saphirus: [
+
+{
+    name: "Rabeth Saddle",
+    rarity: "Mythic",
+    type: "Mount Summon Ticket",
+    img: "Boss loots/8.Saphirus/Rabeth Saddle.png",
+    desc: "A saddle used to obtain Mount Rabeth. If you already own the mount, you will receive 4 Mount Parts instead.",
+    stats: ""
+},
+
+{
+    name: "Serus Sword and Shield",
+    rarity: "Legendary",
+    type: "Sword and Shield",
+    img: "Boss loots/8.Saphirus/Serus Sword and Shield.png",
+    desc: "",
+    stats: "Melee Attack: 845 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serus Battle Staff",
+    rarity: "Legendary",
+    type: "Battle Staff",
+    img: "Boss loots/8.Saphirus/Serus Battle Staff.png",
+    desc: "",
+    stats: "Magic Attack: 885 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serus Battle Shield",
+    rarity: "Legendary",
+    type: "Battle Shield",
+    img: "Boss loots/8.Saphirus/Serus Battle Shield.png",
+    desc: "",
+    stats: "Melee Attack: 805 | Additional Option: 3 Options"
+}
+
+],
+
+Neutro: [
+
+{
+    name: "Serus Knuckles",
+    rarity: "Legendary",
+    type: "Knuckles",
+    img: "Boss loots/9.Neutro/Serus Knuckles.png",
+    desc: "",
+    stats: "Melee Attack: 310 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serus Battle Shield",
+    rarity: "Legendary",
+    type: "Battle Shield",
+    img: "Boss loots/9.Neutro/Serus Battle Shield.png",
+    desc: "",
+    stats: "Melee Attack: 805 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serus Greatsword",
+    rarity: "Legendary",
+    type: "Greatsword",
+    img: "Boss loots/9.Neutro/Serus Greatsword.png",
+    desc: "",
+    stats: "Melee Attack: 930 | Additional Option: 3 Options"
+},
+
+{
+    name: "Serus Staff",
+    rarity: "Legendary",
+    type: "Staff",
+    img: "Boss loots/9.Neutro/Serus Staff.png",
+    desc: "",
+    stats: "Magic Attack: 805 | Additional Option: 3 Options"
+}
+
+],
+
+"Lady Dalia": [
+  {
+    name: "Serus Knuckles",
+    rarity: "Legendary",
+    type: "Knuckles",
+    img: "Boss loots/10.Lady Dalia/Serus Knuckles.png",
+    desc: "",
+    stats: "Melee Attack: 310 | Additional Option: 3 Options"
+  },
+  {
+    name: "Serus Battle Staff",
+    rarity: "Legendary",
+    type: "Battle Staff",
+    img: "Boss loots/10.Lady Dalia/Serus Battle Staff.png",
+    desc: "",
+    stats: "Magic Attack: 885 | Additional Option: 3 Options"
+  },
+  {
+    name: "Serus Battle Shield",
+    rarity: "Legendary",
+    type: "Battle Shield",
+    img: "Boss loots/10.Lady Dalia/Serus Battle Shield.png",
+    desc: "",
+    stats: "Melee Attack: 805 | Additional Option: 3 Options"
+  },
+  {
+    name: "Serus Dual Daggers",
+    rarity: "Legendary",
+    type: "Dual Daggers",
+    img: "Boss loots/10.Lady Dalia/Serus Dual Daggers.png",
+    desc: "",
+    stats: "Melee Attack: 805 | Additional Option: 3 Options"
+  }
+],
 
 
-
-
-
-    Neutro: [
+    Ordo: [
         { 
-            name:"Void Staff",
+            name:"Raitoo Dildo",
             img:"Pictures/loot3.png",
             desc:"A mysterious staff infused with void energy.",
-            rarity:"Legendary",
+            rarity:"Mythic",
             location:"Dropped by Neutro"
         }
     ]
@@ -627,6 +860,46 @@ const epicOptions = [
     { name: "Barrier Increase Rate", value: "4%", success: "10%" },
     { name: "Skill MP Consumption Decrease", value: "2%", success: "10%" }
 ];
+
+const epicArmorOptions = [
+    { name: "Damage Received Decrease", value: "2.2%", success: "10%" },
+    { name: "Defense Power", value: "21", success: "10%" },
+    { name: "Endurance in PvP", value: "14", success: "10%" },
+    { name: "Melee Critical Hit Resistance", value: "24", success: "10%" },
+    { name: "Ranged Critical Hit Resistance", value: "24", success: "10%" },
+    { name: "Max HP", value: "400", success: "10%" },
+    { name: "Max MP", value: "160", success: "10%" },
+    { name: "Gold Gain", value: "0.8%", success: "10%" },
+    { name: "Bag Weight", value: "80", success: "10%" },
+    { name: "Potion Recovery Rate", value: "1.6%", success: "10%" }
+];
+
+const legendaryOptions = [
+    { name: "Critical Hit Damage", value: "9%", success: "10%" },
+    { name: "All Damage in PvP", value: "13%", success: "10%" },
+    { name: "Attack Speed", value: "9%", success: "10%" },
+    { name: "Accuracy", value: "100", success: "10%" },
+    { name: "Endurance Ignore in PvP", value: "85", success: "10%" },
+    { name: "HP Recovery in Battle", value: "50", success: "10%" },
+    { name: "MP Recovery in Battle", value: "25", success: "10%" },
+    { name: "Gold Gain", value: "2.5%", success: "10%" },
+    { name: "Barrier Increase Rate", value: "4.5%", success: "10%" },
+    { name: "Skill MP Consumption Decrease", value: "2.5%", success: "10%" }
+];
+
+const legendaryArmorOptions = [
+    { name: "Damage Received Decrease", value: "2.4%", success: "10%" },
+    { name: "Defense Power", value: "26", success: "10%" },
+    { name: "Endurance in PvP", value: "17", success: "10%" },
+    { name: "Melee Critical Hit Resistance", value: "30", success: "10%" },
+    { name: "Ranged Critical Hit Resistance", value: "30", success: "10%" },
+    { name: "Max HP", value: "500", success: "10%" },
+    { name: "Max MP", value: "180", success: "10%" },
+    { name: "Gold Gain", value: "0.9%", success: "10%" },
+    { name: "Bag Weight", value: "90", success: "10%" },
+    { name: "Potion Recovery Rate", value: "1.8%", success: "10%" }
+];
+
 
 
 
@@ -1041,6 +1314,9 @@ function toggleBossMenu(event, bossName){
 
 
 startTimer();
+
+
+
 
 
 
