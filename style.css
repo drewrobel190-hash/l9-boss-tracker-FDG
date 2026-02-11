@@ -27,24 +27,42 @@ body::before{
 }
 
 
+.select-wrapper {
+    position: relative;  /* ADD THIS */
+    display: inline-block;
+}
 
 
 
+header{
+    padding:20px;
+    border-bottom:2px solid #1f2c3a;
+    display:grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items:center;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(8px);
+    position:sticky;
+    top:0;
+    z-index:9999;
+}
+
+/* Left */
 .header-left{
-    flex:1;
+    justify-self:start;
 }
 
+/* Center */
 .header-center{
-    flex:1;
-    display:flex;
-    justify-content:center;
+    justify-self:center;
 }
 
+/* Right */
 .header-right{
-    flex:1;
-    display:flex;
-    justify-content:flex-end;
+    justify-self:end;
 }
+
+
 
 
 /* Glowing border on hover */
@@ -93,22 +111,7 @@ select{
 
 
 
-header{
-    padding:20px;
-    font-size:24px;
-    font-weight:bold;
-    border-bottom:2px solid #1f2c3a;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    background:rgba(0,0,0,0.6);
-    backdrop-filter:blur(8px);
-    flex-wrap: wrap;
-    gap:10px;
-    position:sticky;   
-    top:0;             
-    z-index:9999;      
-}
+
 
 
 #todayGrid .card{
@@ -467,22 +470,26 @@ button{
     100%{ background-position:200% center; }
 }
 
-.select-wrapper{
-    position:relative;
-    display:inline-block;
+.select-wrapper {
+    position: relative;
+    display: inline-block;
 }
 
-.select-wrapper::after{
-    content:"▼";
-    position:absolute;
-    right:14px;
-    top:50%;
-    transform:translateY(-50%);
-    pointer-events:none;
-    color:#4da6ff;
-    font-size:14px;
-    transition:transform 0.3s ease, color 0.3s ease;
+.select-wrapper select {
+    padding-right: 30px; /* space for arrow */
 }
+
+.select-wrapper::after {
+    content: "▼";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #4da6ff;
+    font-size: 12px;
+}
+
 
 /* Rotate arrow when focused */
 .select-wrapper:focus-within::after{
@@ -881,24 +888,32 @@ body::-webkit-scrollbar-thumb:hover {
 /* Mobile */
 @media (max-width:600px){
 
-    header{
-        justify-content:center;
-        text-align:center;
-    }
+    .header-left{
+    position:absolute;
+    left:20px;
+}
 
-    .header-left,
-    .header-center,
-    .header-right{
-        flex:100%;
-        display:flex;
-        justify-content:center;
-    }
+.header-right{
+    position:absolute;
+    right:20px;
+}
 
-    select,
-    .admin-btn{
-        width:100%;
-        max-width:280px;
-    }
+.header-center{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+}
+
+
+    select{
+    width:auto;
+    min-width:130px;
+}
+
+.admin-btn{
+    width:auto;
+}
+
 }
 
 .dev-banner{
@@ -1182,5 +1197,6 @@ body::-webkit-scrollbar-thumb:hover {
     50% { transform: scale(0.92); }
     100% { transform: scale(1); }
 }
+
 
 
