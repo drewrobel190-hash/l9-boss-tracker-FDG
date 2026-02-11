@@ -326,6 +326,39 @@ image:"Pictures/Chaiflock.png"},
 { name:"Benji", type:"fixed",
 schedule:[{day:0,time:"21:00"}],
 image:"Pictures/Benji.png"},
+{
+    
+  name: "Icaruthia",
+  type: "fixed",
+  disabled: true,
+  schedule: [
+    { day: 2, time: "21:00" },
+    { day: 5, time: "21:00" }
+  ],
+  image: "Pictures/Icaruthia.png"
+},
+
+{
+  name: "Motti",
+  type: "fixed",
+  disabled: true,
+  schedule: [
+    { day: 3, time: "19:00" },  // Wednesday
+    { day: 6, time: "19:00" }   // Saturday
+  ],
+  image: "Pictures/Motti.png"
+},
+
+{
+  name: "Nevaeh",
+  type: "fixed",
+  disabled: true,
+  schedule: [
+    { day: 0, time: "22:00" }   // Sunday
+  ],
+  image: "Pictures/Nevaeh.png"
+},
+
 
 { name:"Tumier", type:"fixed",
 schedule:[{day:0,time:"19:00"}],
@@ -618,13 +651,25 @@ function createCard(boss){
 </div>
 
 
-    ` : `
-        <div class="badge">Fixed</div>
-        <div class="name">${boss.name}</div>
-        <div class="timer">--</div>
-        <div class="spawn"></div>
-        <div class="fixed">Weekly Spawn</div>
-    `;
+    ` : boss.type === "fixed" && boss.disabled ? `
+    <div class="badge">Fixed</div>
+    <div class="name">${boss.name}</div>
+    <div class="timer">No Contest</div>
+    <div class="spawn">
+        ${boss.schedule.map(s=>{
+            const days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+            return days[s.day] + " " + s.time;
+        }).join("<br>")}
+    </div>
+`
+: `
+    <div class="badge">Fixed</div>
+    <div class="name">${boss.name}</div>
+    <div class="timer">--</div>
+    <div class="spawn"></div>
+    <div class="fixed">Weekly Spawn</div>
+`;
+
 
   let lootHTML = "";
 
@@ -706,7 +751,10 @@ function updateTimers(){
     cards.forEach(card=>{
         const bossName = card.querySelector(".name").innerText.split(" (")[0];
         const boss = bosses.find(b=>b.name===bossName);
-        if(!boss) return;
+        if(boss.disabled){
+          card.dataset.spawn = Infinity;
+             return;
+}
 
         const timerEl = card.querySelector(".timer");
         const spawnEl = card.querySelector(".spawn");
