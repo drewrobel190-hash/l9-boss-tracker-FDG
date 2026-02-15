@@ -348,16 +348,12 @@ function adminLogin(){
 
 function getNextFixedSpawn(schedule){
 
-    const nowUTC = new Date();
-    const now = new Date(
-        nowUTC.getTime() + (selectedOffset * 3600000)
-    );
-
+    const now = new Date();
     let next = null;
 
-    schedule.forEach(s => {
+    schedule.forEach(s=>{
 
-        const target = new Date(now);
+        const target = new Date();
         const [h,m] = s.time.split(":");
 
         target.setHours(h, m, 0, 0);
@@ -375,11 +371,9 @@ function getNextFixedSpawn(schedule){
 
     });
 
-    // convert back to real UTC timestamp
-    return new Date(
-        next.getTime() - (selectedOffset * 3600000)
-    );
+    return next;
 }
+
 
 function formatTime(ms){
     const total = Math.max(0, Math.ceil(ms/1000));
@@ -585,15 +579,23 @@ if(boss.disabled){
 
             timerEl.innerText = formatTime(remaining);
 
-            const converted = convertTimezone(spawn);
-            spawnEl.innerText = "Spawn: " + converted.toLocaleString([], {
-              year: "numeric",
-              month: "numeric",
-              day: "numeric",
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true
-            });
+            let displayDate;
+
+if(boss.type === "interval"){
+    displayDate = convertTimezone(spawn);
+} else {
+    displayDate = spawn; // already local
+}
+
+spawnEl.innerText = "Spawn: " + displayDate.toLocaleString([], {
+  year: "numeric",
+  month: "numeric",
+  day: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+  hour12: true
+});
+
 
         } else {
             timerEl.classList.remove("warning");
