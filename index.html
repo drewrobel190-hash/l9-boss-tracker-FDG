@@ -12,25 +12,36 @@
 <body>
 
 <header>
+
   <div class="header-left">
-    <span class="site-title">🔥 L9 Boss Tracker (AzteczX4龙)</span>
-</div>
+      <span class="site-title">
+          🔥 L9 Boss Tracker <span class="aztec">(AztecZX4龙)</span>
+      </span>
+  </div>
 
-    <div class="header-center select-wrapper">
-        <select id="timezoneSelect">
-            <option value="9">Korea (UTC+9)</option>
-            <option value="8">Philippines (UTC+8)</option>
-            <option value="7">Indonesia / Thailand (UTC+7)</option>
-             
-             
+  <div class="header-center">
+      
+      <div class="select-wrapper">
+          <select id="timezoneSelect">
+              <option value="9">Korea (UTC+9)</option>
+              <option value="8">Philippines (UTC+8)</option>
+              <option value="7">Indonesia / Thailand (UTC+7)</option>
+          </select>
+      </div>
+  </div>
 
-        </select>
-    </div>
+  <div class="header-right">
+     <button id="worldBossBtn" class="map-btn">World Bosses</button>
+     <button id="openMapBtn" class="map-btn">Map</button>
+     <button class="admin-btn" onclick="adminLogin()">Admin</button>
+      
+  </div>
 
-    <div class="header-right">
-        <button class="admin-btn" onclick="adminLogin()">Admin</button>
-    </div>
 </header>
+
+
+
+
 <div class="dev-banner">
     Still doing crazy stuff on this website.
 </div>
@@ -44,7 +55,6 @@
 
 <h2>📅 Coming Soon</h2>
 <div class="grid" id="soonGrid"></div>
-</div>
 
 <div id="itemPopup" class="item-popup">
     <div class="item-box">
@@ -63,52 +73,130 @@
 <p id="itemStats"></p>
 
 <div id="itemOptions" class="item-options"></div>
+<div id="itemStats"></div>
+
 
 <p id="itemDesc"></p>
 <p id="itemLocation"></p>
 
     </div>
 </div>
-<div id="adminLayer" class="admin-layer">
-    <div class="admin-box">
-
-        <div class="admin-header">
-            <img id="adminBossImage" class="admin-boss-img">
-
-            <div class="admin-title-group">
-                <h2 id="adminBossName"></h2>
-                <div id="adminCurrentTimer" class="admin-current"></div>
-            </div>
+<div id="allLootPopup" class="all-loot-popup" onclick="closeAllLoot(event)">
+    <div class="all-loot-box">
+        <div class="all-loot-header">
+            <h2 id="allLootTitle"></h2>
+            
         </div>
+        <div id="allLootGrid"></div>
+    </div>
+</div>
+<div id="adminLayer" class="admin-layer">
+  <div class="admin-box">
 
-       <div class="admin-inputs">
-
-    <!-- ROW 1 -->
-    <div class="admin-row">
-        <input type="time" id="adminTime">
-        <button id="adminSetBtn" class="admin-action">Set Death</button>
+    <div class="admin-header">
+      <img id="adminBossImage" class="admin-boss-img">
+      <div class="admin-title-group">
+        <h2 id="adminBossName"></h2>
+        <div id="adminCurrentTimer" class="admin-current"></div>
+      </div>
     </div>
 
-    <!-- ROW 2 -->
-    <div class="admin-row">
+    <div class="admin-inputs">
+
+      <div class="admin-row">
+        <label>Quick Time:</label>
+        <input type="time" id="adminTime">
+        <button id="adminSetBtn" class="admin-action">Set</button>
+      </div>
+
+      <div class="admin-row">
+        <label>Custom Date:</label>
         <input type="date" id="adminDate">
         <input type="time" id="adminCustomTime">
-        <button id="adminCustomBtn" class="admin-action">Set Custom</button>
-        <button id="adminResetBtn" class="admin-reset">Reset Timer</button>
+        <button id="adminCustomBtn" class="admin-action">Custom Set</button>
+      </div>
+
+      <div class="admin-row">
+        <button id="adminResetBtn" class="admin-action admin-reset">
+          Reset Timer
+        </button>
+      </div>
+
     </div>
+
+    <button class="admin-close" onclick="closeAdminLayer()">Close</button>
+
+  </div>
+</div>
+
+<div id="mapOverlay" class="map-overlay">
+
+  <div class="map-container">
+
+    <!-- 🔥 MOVE TABS HERE -->
+    <div class="map-topbar">
+      <button class="map-back-btn" onclick="closeMapOverlay()">
+    ←
+</button>
+      <div class="continent-tab active" data-continent="elsera">
+        El Sera Content
+      </div>
+      <div class="continent-tab" data-continent="kransia">
+        Kransia Continent
+      </div>
+    </div>
+
+    <div class="map-body">
+
+      <!-- SIDEBAR -->
+      <div class="map-sidebar" id="mapSidebar">
+      </div>
+
+      <!-- MAP CONTENT -->
+     <div class="map-content" id="interactiveMap">
+    <div class="map-inner" id="mapInner">
+        <img id="mapImage">
+    </div>
+</div>
+
+    </div>
+
+  </div>
 
 </div>
 
 
 
-        <button class="admin-close" onclick="closeAdminLayer()">Close</button>
 
     </div>
+
+  </div>
+
 </div>
+
+<div id="worldBossOverlay" class="world-overlay">
+
+  <div class="world-overlay-box">
+
+    <div class="world-overlay-header">
+      <h2>🌍 World Bosses</h2>
+      
+    </div>
+
+    <div class="world-overlay-content" id="worldBossContent">
+      <!-- Big boss cards will go here -->
+    </div>
+
+  </div>
+
+</div>
+
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script src="script.js"></script>
+<script src="js/options.js"></script>
+<script src="js/bosses.js"></script>
+<script src="js/lootdata.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
-
