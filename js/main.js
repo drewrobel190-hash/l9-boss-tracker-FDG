@@ -30,7 +30,7 @@ setInterval(() => {
 
     });
 
-}, 300000);
+}, 1800000);
 // ===== FIREBASE OFFLINE MODE =====
 firebase.database().goOnline();
 
@@ -59,15 +59,32 @@ window.addEventListener("online", () => {
 
 // disconnect when tab closes
 window.addEventListener("beforeunload", () => {
+
+    db.ref("bossTimers").off();
+
     firebase.database().goOffline();
+
 });
 
 
-db.ref("bossTimers").on("value", snap => {
-    cloudData = snap.val() || {};
-    updateTimers();
-    sortBosses();
-});
+let bossListenerAttached = false;
+
+function attachBossListener(){
+
+    if(bossListenerAttached) return;
+
+    bossListenerAttached = true;
+
+    db.ref("bossTimers").on("value", snap => {
+
+        cloudData = snap.val() || {};
+        updateTimers();
+        sortBosses();
+
+    });
+}
+
+attachBossListener();
 
 db.ref("fixedBossGuilds").once("value").then(snap => {
     fixedGuildData = snap.val() || {};
