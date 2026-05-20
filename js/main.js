@@ -14,6 +14,23 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const APP_VERSION = "2.2.0";
+
+setInterval(() => {
+
+    db.ref("siteVersion").once("value").then(snap => {
+
+        const liveVersion = snap.val();
+
+        if(!liveVersion) return;
+
+        if(liveVersion !== APP_VERSION){
+            location.reload();
+        }
+
+    });
+
+}, 30000); // check every 30 seconds
 // ===== FIREBASE OFFLINE MODE =====
 firebase.database().goOnline();
 
@@ -52,10 +69,10 @@ db.ref("bossTimers").on("value", snap => {
     sortBosses();
 });
 
-db.ref("fixedBossGuilds").on("value", snap => {
+db.ref("fixedBossGuilds").once("value").then(snap => {
     fixedGuildData = snap.val() || {};
     updateTimers();
-    sortBosses(); 
+    sortBosses();
 });
 
 // ===== ASSIST FLAGS (SEPARATE FROM bossTimers) =====
@@ -1632,16 +1649,27 @@ function applyAdminMode(){
 
 
 function startTimer(){
+
     updateTimers();
     listenTodaySchedule();
 
+    // realtime timer updates
     setInterval(() => {
+
         updateTimers();
+
+        if (!isTyping) sortBosses();
+
+    }, 1000);
+
+    // low priority Firebase checks
+    setInterval(() => {
+
         listenTodaySchedule();
         renderTodaySchedule();
 
-        if (!isTyping) sortBosses();
-    }, 1000);
+    }, 60000);
+
 }
 function toggleBossMenu(event, bossName){
     event.stopPropagation();
@@ -2107,7 +2135,9 @@ document.getElementById("historyBtn").onclick = function(){
 
     list.innerHTML = "Loading...";
 
-    db.ref("bossHistory").once("value", snap => {
+    db.ref("bossHistory")
+.limitToLast(25)
+.once("value", snap => {
 
         const data = snap.val();
         list.innerHTML = "";
