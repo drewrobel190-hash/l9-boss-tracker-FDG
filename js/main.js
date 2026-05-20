@@ -14,6 +14,36 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+// ===== FIREBASE OFFLINE MODE =====
+firebase.database().goOnline();
+
+window.addEventListener("offline", () => {
+    console.log("📴 Firebase Offline Mode");
+    firebase.database().goOffline();
+});
+
+window.addEventListener("online", () => {
+    console.log("🌐 Firebase Back Online");
+    firebase.database().goOnline();
+
+    // refresh data after reconnect
+    db.ref("bossTimers").once("value").then(snap => {
+        cloudData = snap.val() || {};
+        updateTimers();
+        sortBosses();
+    });
+
+    db.ref("fixedBossGuilds").once("value").then(snap => {
+        fixedGuildData = snap.val() || {};
+        updateTimers();
+        sortBosses();
+    });
+});
+
+// disconnect when tab closes
+window.addEventListener("beforeunload", () => {
+    firebase.database().goOffline();
+});
 
 
 db.ref("bossTimers").on("value", snap => {
@@ -31,7 +61,7 @@ db.ref("fixedBossGuilds").on("value", snap => {
 // ===== ASSIST FLAGS (SEPARATE FROM bossTimers) =====
 let assistFlags = {};
 
-db.ref("assistFlags").on("value", snap => {
+db.ref("assistFlags").once("value").then(snap => {
   assistFlags = snap.val() || {};
   updateBadgesUI();
 
@@ -46,7 +76,7 @@ db.ref("assistFlags").on("value", snap => {
 // ===== OUR LOOT FLAGS (SEPARATE) =====
 let claimFlags = {};
 
-db.ref("claimFlags").on("value", snap => {
+db.ref("claimFlags").once("value").then(snap => {
   claimFlags = snap.val() || {};
   updateBadgesUI(); // refresh which badge shows
 });
@@ -596,7 +626,7 @@ function listenTodaySchedule(){
     currentScheduleKey = newKey;
     currentScheduleRef = db.ref("dailySchedules/" + currentScheduleKey);
 
-    currentScheduleRef.on("value", snap => {
+    currentScheduleRef.once("value").then(snap => {
         todaySchedule = snap.val() || [];
         renderTodaySchedule();
     });
